@@ -125,19 +125,19 @@ const KanvasIntegrationsSection = () => {
       </div>
       <div className="hero-text">
         <div>
-          <h1>
+          <h2>
             {Math.ceil(integrations.allMdx.totalCount / 10) * 10}+ Built-in
             Integrations
-          </h1>
+          </h2>
         </div>
         <div>
           <img className="underline-img" src={UnderlineImg} alt="" />
         </div>
         <div>
-          <h4>
+          <h3>
             Support for all of your Cloud Native Infrastructure and
             Applications.
-          </h4>
+          </h3>
         </div>
         <div>
           <Button
