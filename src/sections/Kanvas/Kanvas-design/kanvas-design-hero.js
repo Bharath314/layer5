@@ -81,18 +81,23 @@ const KanvasHeroSection = () => {
   const { isDark } = useStyledDarkMode();
 
   return (
-    <HeroSectionWrapper>
+    <HeroSectionWrapper aria-labelledby="kanvas-hero-title">
       <div className="hero-text">
-        <h1>Kanvas Designer :Visual Cloud Native Infrastructure Tool</h1>
+        <h1 id="kanvas-hero-title">
+          Kanvas Designer: Visual Cloud Native Infrastructure Tool
+        </h1>
 
         <h2>
           <span>Design Your Kubernetes & Cloud Native Infrastructure</span>
         </h2>
         <p>
-          Kanvasis the world's only visual designer for Kubernetes and cloud
-          native applications. Design, deploy, and manage your
-          Kubernetes-baseddeployments, allowing you to speed up infrastructure
-          configuration.
+          <p>
+            Kanvas is a visual designer for Kubernetes and cloud-native
+            applications. It allows developers and platform engineers to design,
+            deploy, and manage Kubernetes-based infrastructure through an
+            intuitive graphical interface, simplifying cloud-native architecture
+            and accelerating configuration.
+          </p>
         </p>
       </div>
       <div className="hero-image">
@@ -100,11 +105,13 @@ const KanvasHeroSection = () => {
           className={imageInView ? "locator-moving" : "locator"}
           src={isDark ? KanvasLocatorDark : KanvasLocatorLight}
           alt="Kanvas visual infrastructure design locator icon"
+          loading="lazy"
         />
         <img
           className={imageInView ? "map map-visible" : "map"}
           src={isDark ? KanvasImageBottomDark : KanvasImageBottomLight}
           alt="Kanvas infrastructure visualization diagram showing cloud native components"
+          loading="lazy"
           ref={locatorRef}
         />
       </div>

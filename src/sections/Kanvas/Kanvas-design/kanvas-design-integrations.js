@@ -112,31 +112,35 @@ const KanvasIntegrationsSection = () => {
   // const { isDark } = useStyledDarkMode();
 
   return (
-    <IntegrationsSectionWrapper>
+    <IntegrationsSectionWrapper aria-labelledby="kanvas-integrations">
       <div
         className="hero-image"
         ref={diagramRef}
         style={{ alignSelf: "center", width: "100%" }}
       >
         <IntegrationsImage
-          alt="integrations-img"
+          alt="Kanvas integrations diagram showing supported cloud native infrastructure tools and platforms"
           className={imageInView ? "diagram-visible" : "diagram-hidden"}
         />
       </div>
       <div className="hero-text">
         <div>
-          <h2>
+          <h2 id="kanvas-integrations">
             {Math.ceil(integrations.allMdx.totalCount / 10) * 10}+ Built-in
-            Integrations
+            Cloud Native Integrations
           </h2>
         </div>
         <div>
-          <img className="underline-img" src={UnderlineImg} alt="" />
+          <img
+            className="underline-img"
+            src={UnderlineImg}
+            alt="decorative underline graphic highlighting integrations section"
+          />
         </div>
         <div>
           <h3>
-            Support for all of your Cloud Native Infrastructure and
-            Applications.
+            Integrate Kanvas with your cloud-native infrastructure, Kubernetes
+            tools, and modern application platforms.
           </h3>
         </div>
         <div>
