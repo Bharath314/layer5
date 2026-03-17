@@ -39,9 +39,9 @@ site-fast:
 build:
 	npm run build
 
-## Empty build cache and run layer5.io on your local machine.
-clean: 
-	gatsby clean && make site
+## Empty build cache and rebuild layer5.io on your local machine (developer use only; CI uses `npm run build` directly).
+clean:
+	npm run clean && make build
 
 ## Run Eslint on your local machine.
 lint:
@@ -58,3 +58,8 @@ features:
 	rm .github/build/spreadsheet.csv
 
 .PHONY: setup build site site-full clean site-fast lint features
+
+## Analyze webpack bundle with FCP optimization
+site-analyze:
+	@echo "🏗️  Building site with webpack bundle analyzer..."
+	ANALYZE_BUNDLE=true npm run build
