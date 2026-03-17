@@ -112,13 +112,18 @@ const KanvasIntegrationsSection = () => {
   // const { isDark } = useStyledDarkMode();
 
   return (
-    <IntegrationsSectionWrapper aria-labelledby="kanvas-integrations">
+    <IntegrationsSectionWrapper
+      id="kanvas-integrations-section"
+      aria-labelledby="kanvas-integrations"
+    >
       <div
         className="hero-image"
         ref={diagramRef}
         style={{ alignSelf: "center", width: "100%" }}
       >
         <IntegrationsImage
+          role="img"
+          title="Kanvas cloud native integrations - Kubernetes, service mesh, and infrastructure tools"
           alt="Kanvas integrations diagram showing supported cloud native infrastructure tools and platforms"
           className={imageInView ? "diagram-visible" : "diagram-hidden"}
         />
@@ -135,21 +140,26 @@ const KanvasIntegrationsSection = () => {
             className="underline-img"
             src={UnderlineImg}
             alt="decorative underline graphic highlighting integrations section"
+            aria-hidden="true"
           />
         </div>
         <div>
-          <h3>
-            Integrate Kanvas with your cloud-native infrastructure, Kubernetes
-            tools, and modern application platforms.
-          </h3>
+          <p>
+            Integrate Kanvas with your cloud-native infrastructure — including
+            Kubernetes clusters, service meshes, CI/CD pipelines, and modern
+            application platforms — to streamline deployment and configuration
+            management.
+          </p>
         </div>
         <div>
           <Button
+            aria-label="View all Kanvas cloud native integrations"
             id="integrations"
             $secondary
             style={{ margin: "1.5rem 0 1.5rem 0" }}
             $url="https://layer5.io/cloud-native-management/meshery/integrations"
             $external={true}
+            rel="noopener noreferrer"
           >
             All Integrations
           </Button>

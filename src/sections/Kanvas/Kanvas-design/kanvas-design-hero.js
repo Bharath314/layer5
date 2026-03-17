@@ -81,33 +81,33 @@ const KanvasHeroSection = () => {
   const { isDark } = useStyledDarkMode();
 
   return (
-    <HeroSectionWrapper aria-labelledby="kanvas-hero-title">
+    <HeroSectionWrapper id="kanvas-hero" aria-labelledby="kanvas-hero-heading">
       <div className="hero-text">
-        <h1 id="kanvas-hero-title">
+        <h1 id="kanvas-hero-heading">
           Kanvas Designer: Visual Cloud Native Infrastructure Tool
         </h1>
 
-        <h2>
-          <span>Design Your Kubernetes & Cloud Native Infrastructure</span>
-        </h2>
+        <h2>Design Your Kubernetes &amp; Cloud Native Infrastructure</h2>
+
         <p>
-          <p>
-            Kanvas is a visual designer for Kubernetes and cloud-native
-            applications. It allows developers and platform engineers to design,
-            deploy, and manage Kubernetes-based infrastructure through an
-            intuitive graphical interface, simplifying cloud-native architecture
-            and accelerating configuration.
-          </p>
+          Kanvas is a visual designer for Kubernetes and cloud-native
+          applications. It allows developers and platform engineers to design,
+          deploy, and manage Kubernetes-based infrastructure through an
+          intuitive graphical interface, simplifying cloud-native architecture
+          and accelerating configuration.
         </p>
       </div>
       <div className="hero-image">
         <img
+          title="Kanvas infrastructure locator - visual Kubernetes design tool"
           className={imageInView ? "locator-moving" : "locator"}
           src={isDark ? KanvasLocatorDark : KanvasLocatorLight}
           alt="Kanvas visual infrastructure design locator icon"
-          loading="lazy"
+          fetchPriority="high"
+          loading="eager"
         />
         <img
+          title="Kanvas cloud native Kubernetes infrastructure visualization"
           className={imageInView ? "map map-visible" : "map"}
           src={isDark ? KanvasImageBottomDark : KanvasImageBottomLight}
           alt="Kanvas infrastructure visualization diagram showing cloud native components"
