@@ -12,9 +12,9 @@ export const StyledThemeProvider = (props) => {
   const { children, darkTheme, lightTheme } = props;
   const { isDark, didLoad } = useContext(ThemeManagerContext);
 
+  // For SSR, we need to provide a consistent theme initially
+  // This ensures the server and client render the same thing initially
   const currentTheme = isDark ? darkTheme : lightTheme;
-  
-  // Fallback to SSR-injected CSS variables during hydration to prevent FOUC.
   const theme = {
     ...(didLoad ? currentTheme : transformTheme(currentTheme)),
   };
@@ -26,7 +26,6 @@ export const StyledThemeProvider = (props) => {
   );
 };
 
-// Maps JS theme object to raw CSS variables (--key) initialized via onRenderBody.
 const transformTheme = (theme) => {
   const newTheme = {};
   Object.keys(theme).forEach((key) => {
