@@ -5,7 +5,7 @@ import lighttheme, { darktheme } from "./src/theme/app/themeStyles";
 const themes = { light: lighttheme, dark: darktheme };
 
 const MagicScriptTag = (props) => {
-  // FIX: Stringify the theme object outside the template literal to prevent
+  // FIX: Stringify the theme object outside the template literal to prevent syntax errors caused by unescaped quotes inside theme values.
   const themeJSON = JSON.stringify(props.theme);
   
   // Injects CSS variables and theme state strictly before the first paint to prevent FOUC.

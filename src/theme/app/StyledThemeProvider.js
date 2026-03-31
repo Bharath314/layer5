@@ -5,9 +5,6 @@ import React, { useContext } from "react";
 import { ThemeProvider } from "styled-components";
 import { ThemeManagerContext } from "./ThemeManager";
 
-// Safe check for browser environment
-const isBrowser = typeof window !== "undefined";
-
 export const StyledThemeProvider = (props) => {
   const { children, darkTheme, lightTheme } = props;
   const { isDark, didLoad } = useContext(ThemeManagerContext);

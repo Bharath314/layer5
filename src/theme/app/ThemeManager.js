@@ -57,8 +57,9 @@ export const ThemeManagerProvider = (props) => {
 
     const root = window.document.documentElement;
     const initialColorValue = (root.style.getPropertyValue("--initial-color-mode") || "").trim();
-    const actualTheme = window.__theme || initialColorValue || ThemeSetting.LIGHT;
-
+    const actualTheme = window.__theme || initialColorValue || ThemeSetting.DARK;
+    
+    // Get stored theme from localStorage
     const storedTheme = localStorage.getItem(DarkThemeKey);
 
     if (storedTheme && storedTheme !== ThemeSetting.SYSTEM) {
