@@ -87,10 +87,10 @@ export const CardWrapper = styled.div`
   }
 
   .post-content-block {
-    padding: 1rem 2rem;
+    padding: 1rem 1rem 1.5rem 1rem;
     padding-bottom: 1.5rem;
     height: auto;
-    min-height: 9rem;
+    min-height: 10rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -98,7 +98,8 @@ export const CardWrapper = styled.div`
 
   @media screen and (max-width: 1200px) and (min-width: 992px) {
     .post-thumb-block {
-      height: 12rem;
+      height: auto;
+      min-height: 10rem;
     }
 
     .post-content-block {
@@ -124,8 +125,9 @@ export const CardWrapper = styled.div`
   .post-title {
     font-size: 1.4rem;
     font-weight: 400;
-    margin: 0 -1rem 0.5rem -1rem;
-    padding: 0 1rem;
+    margin: 0 0 0.5rem 0;
+    padding: 0 ;
+
     white-space: normal !important;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -135,6 +137,7 @@ export const CardWrapper = styled.div`
   }
 
   .post-meta-block {
+    padding: 0 1rem;
     height: auto;
     display: flex;
     margin-bottom: 0.5rem;
@@ -166,6 +169,7 @@ export const CardWrapper = styled.div`
   }
 
   .readmore-btn-wrapper {
+    padding: 0 1rem;
     display: flex;
     justify-content: flex-start;
   }
