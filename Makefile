@@ -28,7 +28,7 @@ site:
 ## Run blog-only dev server (2026 posts only, much faster builds).
 site-blog:
 	@echo "🏗️  Building lightweight site version with blog collection only..."
-	LITE_BUILD_PROFILE=blog BLOG_YEAR=2026 npm start
+	LITE_BUILD_PROFILE=blog BLOG_YEAR=2026 $(MAKE) site
 
 # "make site-full" forces the dev server to include every collection.
 ## Run a full build of layer5.io on your local machine.
