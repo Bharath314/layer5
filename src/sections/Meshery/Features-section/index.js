@@ -85,8 +85,7 @@ const FeaturesSection = () => {
             <h3>One step to managing your microservices</h3>
             <h1>Cloud Native Application Management</h1>
             <p>
-              Confidently take full advantage of all that your infrastructure
-              offers.
+              Confidently take full advantage of all that your infrastructure offers.
             </p>
           </div>
           <div className="mesh-mngmnt-btn">
