@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { useLocation } from "@reach/router";
-import { useStaticQuery, graphql } from "gatsby";
+import { useStaticQuery, graphql, withPrefix } from "gatsby";
 import FavIcon from "../assets/images/favicon.webp";
 
 export const useSiteMetadata = () => {
@@ -32,6 +32,7 @@ const SEO = ({
   children,
 }) => {
   const { pathname } = useLocation();
+  const isPreviewBuild = process.env.GATSBY_PREVIEW === "true";
   const {
     title: defaultTitle,
     description: defaultDescription,
@@ -39,14 +40,26 @@ const SEO = ({
     siteUrl,
     twitterUsername,
   } = useSiteMetadata();
+  const toAbsoluteUrl = (value) => {
+    if (!value) return value;
+    if (/^(?:[a-z]+:)?\/\//i.test(value)) return value;
+
+    const resolvedPath = withPrefix(value).replace(/^\//, "");
+    return new URL(resolvedPath, `${siteUrl}/`).toString();
+  };
   const seo = {
     title: title || defaultTitle,
     description: description || defaultDescription,
-    image: `${siteUrl}${image || siteMetadataImage}`,
-    url: `${siteUrl}${pathname.replace(".html", "") || ""}`.replace(/\/$/, ""),
+    image: toAbsoluteUrl(image || siteMetadataImage),
+    url: new URL(
+      (pathname.replace(".html", "") || "/").replace(/^\//, ""),
+      `${siteUrl}/`,
+    )
+      .toString()
+      .replace(/\/$/, ""),
     twitterUsername,
   };
-  if (!canonical) {
+  if (!canonical || isPreviewBuild) {
     canonical = seo.url;
   }
 
@@ -60,6 +73,12 @@ const SEO = ({
       <meta name="description" content={seo.description} />
       <meta name="image" content={seo.image} />
       <meta name="author" content="Layer5, Inc." />
+      {isPreviewBuild && (
+        <>
+          <meta name="robots" content="noindex, nofollow" />
+          <meta name="googlebot" content="noindex, nofollow" />
+        </>
+      )}
 
       {/* OpenGraph Meta Tags (Facebook, LinkedIn, etc.) */}
       <meta property="og:type" content="website" />

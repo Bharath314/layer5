@@ -41,10 +41,28 @@ jobs:
         if: github.event.action != 'closed'
         run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
 
+      - name: Resolve preview URLs
+        if: github.event.action != 'closed'
+        id: preview-vars
+        env:
+          PREVIEW_SITE_URL: ${{ vars.PREVIEW_SITE_URL }}
+        run: |
+          repo_name="${GITHUB_REPOSITORY#*/}"
+          base_url="${PREVIEW_SITE_URL:-https://${GITHUB_REPOSITORY_OWNER}.github.io/${repo_name}}"
+          base_url="${base_url%/}"
+          path_prefix="/pr-preview/pr-${{ github.event.pull_request.number }}"
+
+          echo "base_url=${base_url}" >> "$GITHUB_OUTPUT"
+          echo "path_prefix=${path_prefix}" >> "$GITHUB_OUTPUT"
+
       - name: Build PR preview
         if: github.event.action != 'closed'
+        env:
+          GATSBY_PREVIEW: "true"
+          GATSBY_SITE_URL: ${{ steps.preview-vars.outputs.base_url }}
+          PATH_PREFIX: ${{ steps.preview-vars.outputs.path_prefix }}
         run: |
-          npm run build
+          npm run build:preview
 
           # Block all crawlers from indexing PR previews.
           cat > public/robots.txt <<'EOF'
@@ -72,7 +90,7 @@ jobs:
           message: |
             🚀 **Preview deployment for PR #${{ github.event.pull_request.number }}**
 
-            🌐 **Preview URL**: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/pr-preview/pr-${{ github.event.pull_request.number }}/
+            🌐 **Preview URL**: ${{ steps.preview-vars.outputs.base_url }}/pr-preview/pr-${{ github.event.pull_request.number }}/
 
             _This preview will be updated automatically when you push new commits to this PR._
 
