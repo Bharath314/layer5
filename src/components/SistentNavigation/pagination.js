@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { graphql, useStaticQuery } from "gatsby";
 
 import Button from "../../reusecore/Button";
@@ -54,37 +54,51 @@ const SistentPagination = () => {
     }
   `);
 
-  // Compile set of published components based on overview pages
-  const publishedComponents = new Set();
-  data.allMdx.nodes.forEach((node) => {
-    if (node.fields.pageType === "overview" && node.frontmatter.published === true) {
-      publishedComponents.add(node.frontmatter.component);
-    }
-  });
-
-  // Map, filter out drafts, and group by tab order: overview -> guidance -> code
-  const dynamicRoutes = data.allMdx.nodes
-    .map((node) => ({
-      componentSlug: node.frontmatter.component,
-      name: node.frontmatter.name || node.frontmatter.component,
-      link: node.fields.slug,
-      pageType: node.fields.pageType,
-    }))
-    .filter((node) => publishedComponents.has(node.componentSlug))
-    .sort((a, b) => {
-      if (a.componentSlug !== b.componentSlug) {
-        return (a.componentSlug || "").localeCompare(b.componentSlug || "");
+  // Published components based on overview pages
+  const publishedComponents = useMemo(() => {
+    const published = new Set();
+    data.allMdx.nodes.forEach((node) => {
+      if (node.fields.pageType === "overview" && node.frontmatter.published === true) {
+        published.add(node.frontmatter.component);
       }
-      return (
-        (PAGE_TYPE_ORDER[a.pageType] || 99) - (PAGE_TYPE_ORDER[b.pageType] || 99)
-      );
     });
+    return published;
+  }, [data.allMdx.nodes]);
 
-  const fullContentArray = [...STABLE_ROUTES, ...dynamicRoutes];
+  // Map, filter, and sort dynamic routes
+  const dynamicRoutes = useMemo(() => {
+    return data.allMdx.nodes
+      .map((node) => ({
+        componentSlug: node.frontmatter.component,
+        text: node.frontmatter.name || node.frontmatter.component,
+        link: node.fields.slug,
+        pageType: node.fields.pageType,
+      }))
+      .filter((node) => publishedComponents.has(node.componentSlug))
+      .sort((a, b) => {
+        if (a.componentSlug !== b.componentSlug) {
+          return (a.componentSlug || "").localeCompare(b.componentSlug || "");
+        }
+        return (
+          (PAGE_TYPE_ORDER[a.pageType] || 99) - (PAGE_TYPE_ORDER[b.pageType] || 99)
+        );
+      });
+  }, [data.allMdx.nodes, publishedComponents]);
+
+  // Combine and de-duplicate routes by link
+  const fullContentArray = useMemo(() => {
+    const combined = [...STABLE_ROUTES, ...dynamicRoutes];
+    const seenLinks = new Set();
+    return combined.filter((route) => {
+      if (seenLinks.has(route.link)) return false;
+      seenLinks.add(route.link);
+      return true;
+    });
+  }, [dynamicRoutes]);
 
   useEffect(() => {
     const path = window.location.pathname;
-    // Handle trajectory slashes
+    // Handle trailing slashes
     const cleanPath = path.endsWith("/") && path.length > 1 ? path.slice(0, -1) : path;
     const index = fullContentArray.findIndex((x) => x.link === cleanPath);
     setCurrentPage(index);
@@ -96,13 +110,13 @@ const SistentPagination = () => {
         <Button $secondary $url={fullContentArray[currentPage - 1]?.link}>
           &larr; Previous
         </Button>
-      ) : <div />}
+      ) : null}
 
       {currentPage !== -1 && currentPage < fullContentArray.length - 1 ? (
         <Button $primary $url={fullContentArray[currentPage + 1]?.link}>
           Next &rarr;
         </Button>
-      ) : <div />}
+      ) : null}
     </PaginationWrapper>
   );
 };
