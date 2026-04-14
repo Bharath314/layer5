@@ -1,4 +1,4 @@
-name: Build and Preview Gatsby Site
+name: PR Preview Deployment (Gatsby + GitHub Pages)
 
 on:
   pull_request_target:
@@ -10,21 +10,22 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: "preview-${{ github.event.pull_request.number || github.run_id }}"
+  group: preview-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
 
 jobs:
-  build-and-deploy-preview:
+  preview:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout PR
         if: github.event.action != 'closed'
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Checkout for cleanup
+      - name: Checkout gh-pages for cleanup
         if: github.event.action == 'closed'
         uses: actions/checkout@v4
         with:
@@ -40,20 +41,23 @@ jobs:
         if: github.event.action != 'closed'
         run: npm ci
 
+      - name: Set PATH_PREFIX
+        if: github.event.action != 'closed'
+        run: echo "PATH_PREFIX=layer5" >> $GITHUB_ENV
+
       - name: Build PR preview
         if: github.event.action != 'closed'
+        env:
+          GATSBY_PREVIEW: "true"
+          GATSBY_SITE_URL: https://${{ github.repository_owner }}.github.io
         run: |
-          PATH_PREFIX=layer5 npm run build:preview
+          PATH_PREFIX=$PATH_PREFIX npm run build:preview
 
           # Prevent indexing
-          cat > public/robots.txt <<'EOF'
-          User-agent: *
-          Disallow: /
-          EOF
+          echo -e "User-agent: *\nDisallow: /" > public/robots.txt
 
       - name: Deploy PR preview
         if: github.event.action != 'closed'
-        id: deploy-preview
         uses: rossjrw/pr-preview-action@v1.6.3
         with:
           source-dir: ./public
@@ -68,13 +72,11 @@ jobs:
         with:
           header: pr-preview
           message: |
-            🚀 **Preview deployment for PR #${{ github.event.pull_request.number }}**
+            🚀 **Preview for PR #${{ github.event.pull_request.number }}**
 
-            🌐 **Preview URL**: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/pr-preview/pr-${{ github.event.pull_request.number }}/
+            🌐 https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/pr-preview/pr-${{ github.event.pull_request.number }}/
 
-            _This preview will be updated automatically when you push new commits to this PR._
-
-      - name: Cleanup PR preview on close
+      - name: Cleanup PR preview
         if: github.event.action == 'closed'
         uses: rossjrw/pr-preview-action@v1.6.3
         with:
