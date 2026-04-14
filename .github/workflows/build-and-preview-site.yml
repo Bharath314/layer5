@@ -1,4 +1,4 @@
-name: Build and Preview Site
+name: Build and Preview Gatsby Site
 
 on:
   pull_request_target:
@@ -15,21 +15,20 @@ concurrency:
 
 jobs:
   build-and-deploy-preview:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
+
     steps:
       - name: Checkout PR
         if: github.event.action != 'closed'
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
 
-      - name: Checkout base branch for cleanup
+      - name: Checkout for cleanup
         if: github.event.action == 'closed'
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.base.ref }}
-          fetch-depth: 1
+          ref: gh-pages
 
       - name: Setup Node
         if: github.event.action != 'closed'
@@ -39,61 +38,18 @@ jobs:
 
       - name: Install dependencies
         if: github.event.action != 'closed'
-        run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
-
-      - name: Resolve preview URLs
-        if: github.event.action != 'closed'
-        id: preview-vars
-        env:
-          PREVIEW_SITE_URL: ${{ vars.PREVIEW_SITE_URL }}
-          PUBLIC_SITE_URL: ${{ vars.PUBLIC_SITE_URL }}
-        run: |
-          owner="${GITHUB_REPOSITORY%%/*}"
-          repo_name="${GITHUB_REPOSITORY#*/}"
-          pr="pr-${{ github.event.pull_request.number }}"
-          base="${PREVIEW_SITE_URL:-${PUBLIC_SITE_URL:-}}"
-
-          if [[ -n "$base" ]]; then
-            base="${base%/}"
-            pages_origin="$(printf '%s' "$base" | sed -E 's|(https?://[^/]+).*|\1|')"
-            base_path="$(printf '%s' "$base" | sed -E 's|https?://[^/]+||' | sed 's|^/||;s|/$||')"
-            if [[ -n "$base_path" ]]; then
-              path_prefix="${base_path}/pr-preview/${pr}"
-              preview_url="${pages_origin}/${base_path}/pr-preview/${pr}/"
-            else
-              path_prefix="pr-preview/${pr}"
-              preview_url="${pages_origin}/pr-preview/${pr}/"
-            fi
-          else
-            pages_origin="https://${owner}.github.io"
-            if [[ "$repo_name" == "${owner}.github.io" ]]; then
-              path_prefix="pr-preview/${pr}"
-              preview_url="${pages_origin}/pr-preview/${pr}/"
-            else
-              path_prefix="${repo_name}/pr-preview/${pr}"
-              preview_url="${pages_origin}/${repo_name}/pr-preview/${pr}/"
-            fi
-          fi
-
-          echo "pages_origin=${pages_origin}" >> "$GITHUB_OUTPUT"
-          echo "path_prefix=${path_prefix}" >> "$GITHUB_OUTPUT"
-          echo "preview_url=${preview_url}" >> "$GITHUB_OUTPUT"
+        run: npm ci
 
       - name: Build PR preview
         if: github.event.action != 'closed'
-        env:
-          GATSBY_PREVIEW: "true"
-          GATSBY_SITE_URL: ${{ steps.preview-vars.outputs.pages_origin }}
-          PATH_PREFIX: ${{ steps.preview-vars.outputs.path_prefix }}
         run: |
-          npm run build:preview
+          npm run build
 
-          # Block all crawlers from indexing PR previews.
+          # Prevent indexing
           cat > public/robots.txt <<'EOF'
           User-agent: *
           Disallow: /
           EOF
-          touch public/.nojekyll
 
       - name: Deploy PR preview
         if: github.event.action != 'closed'
@@ -114,7 +70,7 @@ jobs:
           message: |
             🚀 **Preview deployment for PR #${{ github.event.pull_request.number }}**
 
-            🌐 **Preview URL**: ${{ steps.preview-vars.outputs.preview_url }}
+            🌐 **Preview URL**: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/pr-preview/pr-${{ github.event.pull_request.number }}/
 
             _This preview will be updated automatically when you push new commits to this PR._
 

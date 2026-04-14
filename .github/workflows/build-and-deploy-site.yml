@@ -1,13 +1,9 @@
-name: Build and Deploy Site
+name: Deploy Gatsby site to Pages
 
 on:
   push:
     branches: [master]
-    paths-ignore:
-      - .github/*
-
   workflow_dispatch:
-  workflow_call:
 
 permissions:
   contents: write
@@ -16,18 +12,13 @@ concurrency:
   group: "pages-deployment"
   cancel-in-progress: true
 
-defaults:
-  run:
-    shell: bash
-
 jobs:
   deploy:
     runs-on: ubuntu-24.04
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
+        uses: actions/checkout@v4
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -35,52 +26,12 @@ jobs:
           node-version: "20"
 
       - name: Install dependencies
-        run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
+        run: npm ci
 
-      # GitHub project pages are served from https://<owner>.github.io/<repo>/.
-      # Gatsby must use pathPrefix + `gatsby build --prefix-paths` or scripts/CSS load from / and break.
-      # User/organization sites use a repo named <owner>.github.io and are served from the domain root.
-      - name: Build site
-        env:
-          PUBLIC_SITE_URL: ${{ vars.PUBLIC_SITE_URL }}
+      - name: Build Gatsby site
         run: |
-          owner="${GITHUB_REPOSITORY%%/*}"
-          repo_name="${GITHUB_REPOSITORY#*/}"
-
-          # Simple rule:
-          # - If PUBLIC_SITE_URL is set (custom domain), build at root (no repo prefix).
-          # - Otherwise use GitHub Pages URL; project repos need pathPrefix=<repo>.
-          if [[ -n "${PUBLIC_SITE_URL:-}" ]]; then
-            base="${PUBLIC_SITE_URL%/}"
-            site_origin="$(printf '%s' "$base" | sed -E 's|(https?://[^/]+).*|\1|')"
-            site_path="$(printf '%s' "$base" | sed -E 's|https?://[^/]+||' | sed 's|^/||;s|/$||')"
-            site_host="$(printf '%s' "$site_origin" | sed -E 's|https?://||')"
-
-            export GATSBY_SITE_URL="$site_origin"
-            if [[ -n "$site_path" ]]; then
-              export PATH_PREFIX="$site_path"
-              npm run build:gh-pages
-            else
-              unset PATH_PREFIX
-              npm run build
-            fi
-          else
-            if [[ "$repo_name" == "${owner}.github.io" ]]; then
-              export GATSBY_SITE_URL="https://${owner}.github.io"
-              unset PATH_PREFIX
-              npm run build
-            else
-              export GATSBY_SITE_URL="https://${owner}.github.io"
-              export PATH_PREFIX="$repo_name"
-              npm run build:gh-pages
-            fi
-          fi
+          npm run build
           touch public/.nojekyll
-
-          # Preserve custom domain in GitHub Pages settings by committing CNAME.
-          if [[ -n "${site_host:-}" ]]; then
-            printf '%s\n' "$site_host" > public/CNAME
-          fi
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
