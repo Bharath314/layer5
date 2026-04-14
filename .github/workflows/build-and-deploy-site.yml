@@ -51,9 +51,19 @@ jobs:
           # - If PUBLIC_SITE_URL is set (custom domain), build at root (no repo prefix).
           # - Otherwise use GitHub Pages URL; project repos need pathPrefix=<repo>.
           if [[ -n "${PUBLIC_SITE_URL:-}" ]]; then
-            export GATSBY_SITE_URL="${PUBLIC_SITE_URL%/}"
-            unset PATH_PREFIX
-            npm run build
+            base="${PUBLIC_SITE_URL%/}"
+            site_origin="$(printf '%s' "$base" | sed -E 's|(https?://[^/]+).*|\1|')"
+            site_path="$(printf '%s' "$base" | sed -E 's|https?://[^/]+||' | sed 's|^/||;s|/$||')"
+            site_host="$(printf '%s' "$site_origin" | sed -E 's|https?://||')"
+
+            export GATSBY_SITE_URL="$site_origin"
+            if [[ -n "$site_path" ]]; then
+              export PATH_PREFIX="$site_path"
+              npm run build:gh-pages
+            else
+              unset PATH_PREFIX
+              npm run build
+            fi
           else
             if [[ "$repo_name" == "${owner}.github.io" ]]; then
               export GATSBY_SITE_URL="https://${owner}.github.io"
@@ -66,6 +76,11 @@ jobs:
             fi
           fi
           touch public/.nojekyll
+
+          # Preserve custom domain in GitHub Pages settings by committing CNAME.
+          if [[ -n "${site_host:-}" ]]; then
+            printf '%s\n' "$site_host" > public/CNAME
+          fi
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4

@@ -54,9 +54,16 @@ jobs:
           base="${PREVIEW_SITE_URL:-${PUBLIC_SITE_URL:-}}"
 
           if [[ -n "$base" ]]; then
-            pages_origin="${base%/}"
-            path_prefix="pr-preview/${pr}"
-            preview_url="${pages_origin}/pr-preview/${pr}/"
+            base="${base%/}"
+            pages_origin="$(printf '%s' "$base" | sed -E 's|(https?://[^/]+).*|\1|')"
+            base_path="$(printf '%s' "$base" | sed -E 's|https?://[^/]+||' | sed 's|^/||;s|/$||')"
+            if [[ -n "$base_path" ]]; then
+              path_prefix="${base_path}/pr-preview/${pr}"
+              preview_url="${pages_origin}/${base_path}/pr-preview/${pr}/"
+            else
+              path_prefix="pr-preview/${pr}"
+              preview_url="${pages_origin}/pr-preview/${pr}/"
+            fi
           else
             pages_origin="https://${owner}.github.io"
             if [[ "$repo_name" == "${owner}.github.io" ]]; then
