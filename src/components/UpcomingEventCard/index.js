@@ -37,7 +37,7 @@ const UpcomingEvents = ({ data }) => {
                       <h3 className="blog-slider_title">{item.frontmatter.title}</h3>
                       <p className="blog-slider_date">{item.frontmatter.date}</p>
                       <p className="blog-slider_description">{item.frontmatter.abstract}</p>
-                      <Button $secondary className="blog-slider_button" $url={item.frontmatter.eurl} title="Join Now" $external={true} />
+                      <Button $secondary className="blog-slider_button" $url={item.frontmatter.eurl || `/community/events/${slugify(item.frontmatter.title)}`} title="Join Now" $external={!!item.frontmatter.eurl} />
                     </div>
                   </div>
                 </SwiperSlide>
