@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import PopOutCard from "../../PopOutCardCarousel";
 
-import Levels from "./academy-catalog.gif";
+const level = "/academy-catalog.gif";
 import Challenges from "./challenges.webp";
 import Badges from "./badges.webp";
 import Track from "./track.webp";

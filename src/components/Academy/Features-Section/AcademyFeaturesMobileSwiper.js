@@ -5,7 +5,7 @@ import "swiper/css";
 import "swiper/css/effect-cards";
 import { EffectCards, Pagination, Navigation, Autoplay } from "swiper/modules";
 import styled from "styled-components";
-import Levels from "./academy-catalog.gif";
+const levels = "/academy-catalog.gif";
 import Challenges from "./challenges.webp";
 import Badges from "./badges.webp";
 import Track from "./track.webp";
