@@ -225,6 +225,14 @@ const options = [
     icon: communityIcon,
     className: "allOptions",
   },
+  {
+    label: "Employee",
+    value: "employee",
+    color: lighttheme.linkColor,
+    isFixed: true,
+    icon: icon5,
+    className: "allOptions",
+  },
 ].map((obj) => ({
   ...obj,
   label: (
