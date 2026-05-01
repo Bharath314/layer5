@@ -1,0 +1,94 @@
+---
+title: "Discover Meshery Components with mesheryctl"
+subtitle: "A quick tip for finding what you can deploy, right after install"
+date: 2026-05-01 10:00:00 -0500
+author: Layer5 Team
+thumbnail: ./hero-image.svg
+darkthumbnail: ./hero-image.svg
+description: "Use mesheryctl component list and search to inventory every model registered in your Meshery server, then find the same components in Kanvas."
+type: Blog
+category: Meshery
+tags:
+  - Meshery
+  - mesheryctl
+  - Kanvas
+  - Platform Engineering
+featured: false
+published: true
+resource: true
+product: Meshery
+---
+
+import { BlogWrapper } from "../../Blog.style.js";
+import { Link } from "gatsby";
+import Blockquote from "../../../../reusecore/Blockquote";
+import Callout from "../../../../reusecore/Callout";
+import CTA_FullWidth from "../../../../components/Call-To-Actions/CTA_FullWidth";
+import CTAImg from "../../../../assets/images/meshery/icon-only/meshery-logo-shadow.webp";
+import heroImage from "./hero-image.svg";
+
+<BlogWrapper>
+
+<div className="intro">
+  <p>
+    You just finished <code>mesheryctl system start</code> and the server is up. Before you draft a design, you need to know what you can actually drop on the canvas - which models are registered, which versions are available, and whether that obscure CRD you care about is one of them. The fastest path is two commands and the Kanvas component browser, and it takes about a minute.
+  </p>
+</div>
+
+<img
+  src={heroImage}
+  className="image-center-shadow"
+  alt="A terminal showing mesheryctl component list and search commands against a Layer5 cosmic backdrop"
+/>
+
+## Inventory everything with `mesheryctl component list`
+
+Run <code>mesheryctl component list</code> and Meshery prints a paginated table of every component its registry knows about - Name, Model, Category, and Version. By default you get ten rows per page; pass <code>--page</code> to walk through the rest, or <code>--pagesize</code> to widen the view, or just <code>--count</code> to get the headline number for a slide.
+
+```bash
+mesheryctl component list
+mesheryctl component list --page 3 --pagesize 50
+mesheryctl component list --count
+```
+
+That count is the truth on your specific server. It reflects every model you've imported, every integration that ships out of the box, and any custom component packages your team has registered. If a component isn't in this list, Kanvas can't draw it and Meshery can't deploy it - which makes <code>component list</code> the canonical "what's installed" check.
+
+<Blockquote quote="If it isn't in mesheryctl component list, Kanvas can't draw it and Meshery can't deploy it." />
+
+## Filter by topic with `mesheryctl component search`
+
+Once the catalog gets big, scrolling stops being useful. <code>mesheryctl component search &lt;query&gt;</code> hits the same registry but filters by name, so <code>mesheryctl component search istio</code> returns only Istio-related components, and <code>mesheryctl component search prometheus</code> narrows it to Prometheus and its operands.
+
+```bash
+mesheryctl component search istio
+mesheryctl component search prometheus
+mesheryctl component search "aws s3"
+```
+
+The search is the fastest way to confirm a model is actually registered before you commit to a design. If <code>search</code> returns nothing, the integration probably isn't imported yet - check the <a href="https://docs.meshery.io/concepts/logical/components" target="_blank" rel="noopener noreferrer">Meshery components documentation</a> for the import flow, or browse <Link to="/cloud-native-management/meshery/integrations">Meshery's integrations</Link> to see what's available upstream.
+
+## Browse the same registry visually in Kanvas
+
+Open <Link to="/kanvas">Kanvas</Link> and the left sidebar's component browser is reading from exactly the same registry your CLI just queried. Type the same search term into the browser's filter and you'll see the components you found in the terminal, grouped by model and category, ready to drag onto the canvas. The CLI is faster for inventory and scripting; the browser is faster for actually building.
+
+<Callout type="tip" title="Two views, one source of truth">
+  <p>The CLI and the Kanvas component browser hit the same Meshery registry. If you imported a model with <code>mesheryctl model import</code>, it shows up in both immediately - no restart, no re-login.</p>
+</Callout>
+
+<CTA_FullWidth
+  image={CTAImg}
+  heading="Get Started with Meshery"
+  alt="Meshery - Cloud Native Manager"
+  content="Meshery is the open source, cloud native management plane for Kubernetes and cloud native infrastructure."
+  button_text="Get Meshery"
+  url="/cloud-native-management/meshery"
+  external_link={false}
+/>
+
+<div className="outro">
+  <p>
+    Pin this post next to your terminal. When you're ready to go deeper, head to the <Link to="/cloud-native-management/meshery/meshery-playground">Meshery Playground</Link> or join the conversation in the <a href="https://slack.layer5.io" target="_blank" rel="noopener noreferrer">Layer5 Slack</a>.
+  </p>
+</div>
+
+</BlogWrapper>
