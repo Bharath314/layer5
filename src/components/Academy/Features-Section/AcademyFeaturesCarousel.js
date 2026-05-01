@@ -9,7 +9,7 @@ import Track from "./track.webp";
 const CONTENT = [
   {
     title: "Structured Learning Paths",
-    img: Levels,
+    img: "/images/academy-catalog.gif",
     description:
       "Comprehensive DevOps learning paths designed for different skill levels — from beginner to advanced. Master Kubernetes, cloud and cloud native technologies with hands-on experience.",
   },
