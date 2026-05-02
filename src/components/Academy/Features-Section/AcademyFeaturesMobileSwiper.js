@@ -5,7 +5,7 @@ import "swiper/css";
 import "swiper/css/effect-cards";
 import { EffectCards, Pagination, Navigation, Autoplay } from "swiper/modules";
 import styled from "styled-components";
-import Levels from "/static/images/academy-catalog.gif";
+import Levels from "../../../../static/images/academy-catalog.gif";
 import Challenges from "./challenges.webp";
 import Badges from "./badges.webp";
 import Track from "./track.webp";
@@ -13,7 +13,7 @@ import Track from "./track.webp";
 const CONTENT = [
   {
     title: "Structured Learning Paths",
-    img: "/images/academy-catalog.gif",
+    img: Levels,
     description:
       "Comprehensive DevOps learning paths designed for different skill levels — from beginner to advanced. Master Kubernetes, cloud and cloud native technologies with hands-on experience.",
     gradient: "one",
